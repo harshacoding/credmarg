@@ -22,6 +22,11 @@ public class VendorServiceImp implements VendorService{
     public List<Vendor> getAllVendors() {
         return vendorRepository.findAll();
     }
+    
+    @Override
+    public Vendor getVendorById(Long id) {
+        return vendorRepository.findById(id).orElse(null);
+    }
 
  
 }

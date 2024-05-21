@@ -1,0 +1,5 @@
+package server.Demo.Model;
+
+public class EmailRequest {
+
+}

@@ -4,14 +4,20 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import server.Demo.Model.EmailLog;
+import server.Demo.Model.EmailRequest;
 import server.Demo.Model.Vendor;
+import server.Demo.Repository.EmailLogRepository;
+import server.Demo.Service.EmailLogService;
+import server.Demo.Service.EmailService;
 import server.Demo.Service.VendorService;
 
 @RestController
@@ -22,6 +28,8 @@ public class VendorController {
 	
 	 @Autowired
 	    private EmailService emailService;
+	 @Autowired
+	    private EmailLogService emailLogService;
 
 	    @Autowired
 	    private EmailLogRepository emailLogRepository;
@@ -36,18 +44,42 @@ public class VendorController {
         return vendorService.getAllVendors();
     }
     
-    @PostMapping("/sendEmail")
-    public String sendEmail(@RequestParam String to, @RequestParam String subject, @RequestParam String body) {
-        try {
-            String response = emailService.sendEmail(to, subject, body);
-            // Save the email log
-            EmailLog emailLog = new EmailLog(to, subject, body, response);
-            emailLogRepository.save(emailLog);
-            return response;
-        } catch (IOException e) {
-            return "Error while sending email: " + e.getMessage();
+    @GetMapping("/{id}")
+    public ResponseEntity<Vendor> getVendorById(@PathVariable Long id) {
+    	Vendor vendor = vendorService.getVendorById(id);
+        if (vendor != null) {
+            return ResponseEntity.ok(vendor);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
+    
+    @PostMapping("/send-email")
+    public ResponseEntity<String> sendEmail(@RequestBody EmailRequest emailRequest){
+    	Long vendorId = emailRequest.getVendorId();
+    	System.out.println(vendorId);
+        String content = emailRequest.getContent();
+        Vendor vendor = vendorService.getVendorById(vendorId);
+        if (vendor == null) {
+            return ResponseEntity.badRequest().body("Vendor not found");
+        }
 
- 
+        String email = vendor.getEmail();
+        String subject = "Payment Information";
+
+        try {
+            String response = emailService.sendEmail(email, subject, content);
+            EmailLog emailLog = new EmailLog();
+            emailLog.setContent(content);
+            emailLog.setVendor(vendor);
+            emailLogService.saveEmailLog(emailLog);
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Error while sending email: " + e.getMessage());
+        }
+    }
+    @GetMapping("/sent-emails")
+    public List<EmailLog> getSentEmails() {
+    	return emailLogService.getAllEmailLogs();
+    }
     }

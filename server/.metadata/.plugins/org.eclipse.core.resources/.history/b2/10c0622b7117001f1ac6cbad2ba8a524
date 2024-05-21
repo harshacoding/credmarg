@@ -1,0 +1,8 @@
+package server.Demo.Service;
+
+import server.Demo.Model.EmailLog;
+
+public interface EmailLogService {
+	void saveEmailLog(EmailLog emailLog);
+
+}
