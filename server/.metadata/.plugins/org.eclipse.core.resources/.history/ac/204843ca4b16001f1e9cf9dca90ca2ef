@@ -1,0 +1,13 @@
+package server.main.Demo.Service;
+
+import java.util.List;
+
+import server.main.Demo.Model.Employee;
+
+public interface EmployeeService {
+	Employee saveEmployee(Employee employee);
+    List<Employee> getAllEmployees();
+    Employee getEmployeeById(Long id);
+    
+
+}

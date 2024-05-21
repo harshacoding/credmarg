@@ -1,0 +1,5 @@
+package server.Demo.Controller;
+
+public class VendorController {
+
+}

@@ -1,0 +1,5 @@
+package server.Demo.Repository;
+
+public interface VendorRepository {
+
+}

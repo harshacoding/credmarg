@@ -1,0 +1,5 @@
+package server.main.Demo.Repository;
+
+public interface EmployeeRepository {
+
+}

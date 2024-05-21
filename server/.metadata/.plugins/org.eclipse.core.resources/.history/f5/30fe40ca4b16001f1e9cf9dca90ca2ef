@@ -1,0 +1,9 @@
+package server.main.Demo.Repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import server.main.Demo.Model.Employee;
+
+public interface EmployeeRepository extends JpaRepository<Employee, Long>{
+
+}
