@@ -64,8 +64,7 @@ public class VendorController {
             return ResponseEntity.badRequest().body("Vendor not found");
         }
 
-        String email = vendor.getEmail();
-        String subject = "Payment Information";
+       
 
         try {
             String response = emailService.sendEmail(email, subject, content);
