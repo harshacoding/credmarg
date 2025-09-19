@@ -72,10 +72,7 @@ public class VendorController {
             emailLog.setContent(content);
             emailLog.setVendor(vendor);
             emailLogService.saveEmailLog(emailLog);
-            return ResponseEntity.ok(response);
-        } catch (IOException e) {
-            return ResponseEntity.status(500).body("Error while sending email: " + e.getMessage());
-        }
+       
     }
     @GetMapping("/sent-emails")
     public List<EmailLog> getSentEmails() {
