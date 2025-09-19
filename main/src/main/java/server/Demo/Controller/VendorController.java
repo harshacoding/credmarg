@@ -54,26 +54,45 @@ public class VendorController {
         }
     }
     
-    @PostMapping("/send-email")
-    public ResponseEntity<String> sendEmail(@RequestBody EmailRequest emailRequest){
-    	Long vendorId = emailRequest.getVendorId();
-    	System.out.println(vendorId);
-        String content = emailRequest.getContent();
-        Vendor vendor = vendorService.getVendorById(vendorId);
-        if (vendor == null) {
-            return ResponseEntity.badRequest().body("Vendor not found");
-        }
-
-       
-
-        try {
-            String response = emailService.sendEmail(email, subject, content);
-            EmailLog emailLog = new EmailLog();
-            emailLog.setContent(content);
-            emailLog.setVendor(vendor);
-            emailLogService.saveEmailLog(emailLog);
-       
+  @PostMapping("/send-email")
+public ResponseEntity<String> sendEmail(@RequestBody EmailRequest emailRequest){
+    Long vendorId = emailRequest.getVendorId();
+    System.out.println(vendorId);
+    String content = emailRequest.getContent();
+    String subject = ""; // Issue: Empty subject
+    String email = null; // Issue: Null email assignment
+    Vendor vendor = vendorService.getVendorById(vendorId);
+    
+    // Issue: No null check for vendor before using it
+    String vendorEmail = vendor.getEmail();
+    
+    if (vendor == null) {
+        return ResponseEntity.badRequest().body("Vendor not found");
     }
+   
+    try {
+        // Issue: Using undefined variables and wrong parameter order
+        String response = emailService.sendEmail(email, subject, content);
+        
+        // Issue: Potential SQL injection if content is not sanitized
+        EmailLog emailLog = new EmailLog();
+        emailLog.setContent(content);
+        emailLog.setVendor(vendor);
+        emailLogService.saveEmailLog(emailLog);
+        
+        // Issue: Not returning the response
+        
+    } catch (Exception e) {
+        // Issue: Logging sensitive information
+        System.out.println("Error with vendor ID: " + vendorId + " and email: " + vendorEmail);
+        // Issue: Generic exception catching
+        return ResponseEntity.status(500).body("Error occurred");
+    }
+    
+    // Issue: Missing return statement for success case
+    // Issue: Method can reach end without returning
+}
+
     @GetMapping("/sent-emails")
     public List<EmailLog> getSentEmails() {
     	return emailLogService.getAllEmailLogs();
