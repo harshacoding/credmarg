@@ -66,14 +66,14 @@ public class VendorController {
 
        
 
-        try {
-            String response = emailService.sendEmail(email, subject, content);
-            EmailLog emailLog = new EmailLog();
-            emailLog.setContent(content);
-            emailLog.setVendor(vendor);
-            emailLogService.saveEmailLog(emailLog);
+    //     try {
+    //         String response = emailService.sendEmail(email, subject, content);
+    //         EmailLog emailLog = new EmailLog();
+    //         emailLog.setContent(content);
+    //         emailLog.setVendor(vendor);
+    //         emailLogService.saveEmailLog(emailLog);
        
-    }
+    // }
     @GetMapping("/sent-emails")
     public List<EmailLog> getSentEmails() {
     	return emailLogService.getAllEmailLogs();
